@@ -18,10 +18,10 @@ public class Restaurant {
     private Long id;  // 식당 DB 기본키, 자동증가
 
     @Column
-    private boolean diary;  // 일기 작성 여부
+    private Boolean diary;  // 일기 작성 여부
 
     @Column
-    private boolean heart; // 하트 여부
+    private Boolean heart; // 하트 여부
 
     @Column
     private String name;  // 식당 이름
@@ -69,6 +69,9 @@ public class Restaurant {
 
 interface RestaurantRepo extends JpaRepository<Restaurant, Long> {
     boolean existsByName(String name);
+
+    // 좋아요(하트)가 true인 식당 개수
+    long countByHeartTrue();
 }
 
 @Data

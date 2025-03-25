@@ -38,7 +38,7 @@ public class FoodDiaryController {
         return ResponseEntity.ok(responseList);
     }
 
-    // 새로운 일기 추가
+    // 새로운 일기 저장
     @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<String> addDiary(
             @RequestParam Long restaurantId,
