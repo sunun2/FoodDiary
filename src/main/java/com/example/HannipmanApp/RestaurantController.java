@@ -4,10 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -82,4 +79,18 @@ public class RestaurantController {
                 .map(r -> new RestaurantDTO(r.getLatitude(), r.getLongitude(), r.getName()))
                 .collect(Collectors.toList());
     }
+
+    @PatchMapping("/{id}/heart")
+    public ResponseEntity<String> toggleHeart(@PathVariable Long id) {
+        Restaurant restaurant = restaurantRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("식당을 찾을 수 없습니다."));
+
+        Boolean currentHeart = Boolean.TRUE.equals(restaurant.getHeart());
+        restaurant.setHeart(!currentHeart);
+
+        restaurantRepo.save(restaurant);
+
+        return ResponseEntity.ok("하트 상태가 " + (!currentHeart ? "❤️ 좋아요" : "💔 해제") + "로 변경되었습니다.");
+    }
+
 }

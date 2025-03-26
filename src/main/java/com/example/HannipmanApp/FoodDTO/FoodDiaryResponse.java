@@ -2,20 +2,22 @@ package com.example.HannipmanApp.FoodDTO;
 
 import java.util.Date;
 
-// ✅ 리스트용 DTO (전체 일기 리스트 조회)
+//전체 일기 리스트 조회
 public class FoodDiaryResponse {
     private Long id;
     private String diaryText;
     private Date createdAt;
     private Long restaurantId;
     private String photoPath;
+    private Boolean heart;
 
-    public FoodDiaryResponse(Long id, String diaryText, Date createdAt, Long restaurantId, String photoPath) {
+    public FoodDiaryResponse(Long id, String diaryText, Date createdAt, Long restaurantId, String photoPath, Boolean heart) {
         this.id = id;
         this.diaryText = diaryText;
         this.createdAt = createdAt;
         this.restaurantId = restaurantId;
         this.photoPath = photoPath;
+        this.heart = heart;
     }
 
     public Long getId() { return id; }
@@ -32,6 +34,9 @@ public class FoodDiaryResponse {
 
     public String getPhotoPath() { return photoPath; }
     public void setPhotoPath(String photoPath) { this.photoPath = photoPath; }
+
+    public Boolean getHeart() { return heart; }
+    public void setHeart(Boolean heart) { this.heart = heart; }
 }
 
 

@@ -10,9 +10,10 @@ public class FoodDiaryDetailResponse {
     private Long restaurantId;
     private String restaurantName;
     private String address;
+    private Boolean heart;
 
     public FoodDiaryDetailResponse(Long id, String diaryText, Date createdAt,
-                                   String photoPath, Long restaurantId, String restaurantName, String address) {
+                                   String photoPath, Long restaurantId, String restaurantName, String address, Boolean heart) {
         this.id = id;
         this.diaryText = diaryText;
         this.createdAt = createdAt;
@@ -20,6 +21,7 @@ public class FoodDiaryDetailResponse {
         this.restaurantId = restaurantId;
         this.restaurantName = restaurantName;
         this.address = address;
+        this.heart = heart;
     }
 
     public Long getId() { return id; }
@@ -42,4 +44,8 @@ public class FoodDiaryDetailResponse {
 
     public String getAddress() { return address; }
     public void setAddress(String address) { this.address = address; }
+
+    public Boolean getHeart() { return heart; }
+    public void setHeart(Boolean heart) { this.heart = heart; }
 }
+

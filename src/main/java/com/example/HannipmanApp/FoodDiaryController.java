@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,14 +39,15 @@ public class FoodDiaryController {
                         diary.getDiaryText(),
                         diary.getCreatedAt(),
                         diary.getRestaurant().getId(),
-                        diary.getPhotoPath()
+                        diary.getPhotoPath(),
+                        diary.getRestaurant().getHeart()
                 ))
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(responseList);
     }
 
-    // 새로운 일기 저장
+    // 새로운 일기 추가/저장
     @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<String> addDiary(
             @RequestParam Long restaurantId,
@@ -101,17 +103,37 @@ public class FoodDiaryController {
     }
 
 
-    // 전체 피드 조회 API (사진만 보여주는 리스트)
+    // 전체 일기 조회 API (사진만 보여주자)
     @GetMapping("/feed")
-    public ResponseEntity<List<FoodDiaryFeedResponse>> getFeedPhotos() {
-        List<FoodDiary> diaries = foodDiaryRepo.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
+    public ResponseEntity<List<FoodDiaryFeedResponse>> getFeedPhotos(@RequestParam(defaultValue = "latest") String sort) {
+        List<FoodDiary> diaries = foodDiaryRepo.findAll();
 
+        // 정렬 조건에 따라 다르게 처리 : 하트순
+        if (sort.equals("heart")) {
+            diaries = diaries.stream()
+                    .sorted(Comparator
+                            .comparing((FoodDiary d) -> Boolean.TRUE.equals(d.getRestaurant().getHeart())).reversed()
+                            .thenComparing(FoodDiary::getCreatedAt, Comparator.reverseOrder()))
+                    .collect(Collectors.toList());
+        } else {
+            // 기본 정렬: 최신순
+            diaries = diaries.stream()
+                    .sorted(Comparator.comparing(FoodDiary::getCreatedAt).reversed())
+                    .collect(Collectors.toList());
+        }
+
+        // DTO 매핑
         List<FoodDiaryFeedResponse> response = diaries.stream()
-                .map(d -> new FoodDiaryFeedResponse(d.getId(), d.getPhotoPath()))
+                .map(d -> new FoodDiaryFeedResponse(
+                        d.getId(),
+                        d.getPhotoPath(),
+                        d.getRestaurant().getHeart()
+                ))
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(response);
     }
+
 
     // 일기 상세 조회 API (사진 클릭했을 때 전체 일기 보여주기)
     @GetMapping("/detail/{diaryId}")
@@ -128,7 +150,8 @@ public class FoodDiaryController {
                 diary.getPhotoPath(),
                 restaurant.getId(),
                 restaurant.getName(),
-                restaurant.getPlace()
+                restaurant.getPlace(),
+                restaurant.getHeart()
         );
 
         return ResponseEntity.ok(response);
