@@ -1,6 +1,10 @@
 package com.example.HannipmanApp;
 
+import com.example.HannipmanApp.FoodDTO.FoodDiaryDetailResponse;
+import com.example.HannipmanApp.FoodDTO.FoodDiaryFeedResponse;
+import com.example.HannipmanApp.FoodDTO.FoodDiaryResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,6 +19,9 @@ public class FoodDiaryController {
 
     @Autowired
     private FoodDiaryService foodDiaryService;
+
+    @Autowired
+    private FoodDiaryRepo foodDiaryRepo;
 
     // 특정 식당의 일기 가져오기
     @GetMapping("/{restaurantId}")
@@ -91,6 +98,40 @@ public class FoodDiaryController {
     public ResponseEntity<String> resetAutoIncrement() {
         foodDiaryService.resetAutoIncrement();
         return ResponseEntity.ok("자동 증가 값이 성공적으로 초기화되었습니다.");
+    }
+
+
+    // 전체 피드 조회 API (사진만 보여주는 리스트)
+    @GetMapping("/feed")
+    public ResponseEntity<List<FoodDiaryFeedResponse>> getFeedPhotos() {
+        List<FoodDiary> diaries = foodDiaryRepo.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
+
+        List<FoodDiaryFeedResponse> response = diaries.stream()
+                .map(d -> new FoodDiaryFeedResponse(d.getId(), d.getPhotoPath()))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(response);
+    }
+
+    // 일기 상세 조회 API (사진 클릭했을 때 전체 일기 보여주기)
+    @GetMapping("/detail/{diaryId}")
+    public ResponseEntity<FoodDiaryDetailResponse> getDiaryDetail(@PathVariable Long diaryId) {
+        FoodDiary diary = foodDiaryRepo.findById(diaryId)
+                .orElseThrow(() -> new RuntimeException("일기를 찾을 수 없습니다."));
+
+        Restaurant restaurant = diary.getRestaurant();
+
+        FoodDiaryDetailResponse response = new FoodDiaryDetailResponse(
+                diary.getId(),
+                diary.getDiaryText(),
+                diary.getCreatedAt(),
+                diary.getPhotoPath(),
+                restaurant.getId(),
+                restaurant.getName(),
+                restaurant.getPlace()
+        );
+
+        return ResponseEntity.ok(response);
     }
 }
 

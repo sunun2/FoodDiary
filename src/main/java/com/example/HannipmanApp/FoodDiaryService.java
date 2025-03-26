@@ -39,10 +39,13 @@ public class FoodDiaryService {
         foodDiaryRepo.save(diary);
 
         if (photoBytes != null) {
-            String photoPath = savePhotoToFileSystem(photoBytes, restaurantId, diary.getId());
-            diary.setPhotoPath(photoPath);
+            String filePath = savePhotoToFileSystem(photoBytes, restaurantId, diary.getId());
+            String urlPath = "/photos/restaurant_" + restaurantId + "/" + diary.getId() + ".jpg";  //클라이언트에서 사용할 경로
+
+            diary.setPhotoPath(urlPath);  //Glide에서 사용할 수 있도록 URL 경로 저장
             foodDiaryRepo.save(diary);
         }
+
     }
 
     // 일기 수정
@@ -91,9 +94,10 @@ public class FoodDiaryService {
         foodDiaryRepo.deleteAll();
     }
 
+
     // 자동 증가 값 초기화
     public void resetAutoIncrement() {
-        entityManager.createNativeQuery("ALTER TABLE FoodDiary AUTO_INCREMENT = 1").executeUpdate();
+        entityManager.createNativeQuery("ALTER TABLE restaurantdb.food_diary AUTO_INCREMENT = 1").executeUpdate();
     }
 
     // 사진 저장
