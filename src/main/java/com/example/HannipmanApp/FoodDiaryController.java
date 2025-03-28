@@ -108,7 +108,7 @@ public class FoodDiaryController {
     public ResponseEntity<List<FoodDiaryFeedResponse>> getFeedPhotos(@RequestParam(defaultValue = "latest") String sort) {
         List<FoodDiary> diaries = foodDiaryRepo.findAll();
 
-        // 정렬 조건에 따라 다르게 처리 : 하트순
+        // 정렬 조건에 따라 다르게 처리 : 하트순  //..별점순으로 바꾸기
         if (sort.equals("heart")) {
             diaries = diaries.stream()
                     .sorted(Comparator
@@ -124,6 +124,7 @@ public class FoodDiaryController {
 
         // DTO 매핑
         List<FoodDiaryFeedResponse> response = diaries.stream()
+
                 .map(d -> new FoodDiaryFeedResponse(
                         d.getId(),
                         d.getPhotoPath(),
@@ -151,8 +152,11 @@ public class FoodDiaryController {
                 restaurant.getId(),
                 restaurant.getName(),
                 restaurant.getPlace(),
-                restaurant.getHeart()
+                restaurant.getHeart(),
+                diary.getRating(),          // 별점 추가
+                diary.getMenuName()         // 메뉴 이름 추가
         );
+
 
         return ResponseEntity.ok(response);
     }

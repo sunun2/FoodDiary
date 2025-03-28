@@ -31,6 +31,10 @@ public class FoodDiary {
     @Column(nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
+    private Float rating; // 별점
+    private String menuName; // 메뉴 이름
+
+
 }
 
 interface FoodDiaryRepo extends JpaRepository<FoodDiary, Long> {

@@ -36,16 +36,14 @@ public class FoodDiaryService {
         diary.setRestaurant(restaurant);
         diary.setDiaryText(diaryText);
         diary.setCreatedAt(new java.util.Date());
-        foodDiaryRepo.save(diary);
+        foodDiaryRepo.save(diary); // 먼저 저장해서 diaryId 생성
 
         if (photoBytes != null) {
-            String filePath = savePhotoToFileSystem(photoBytes, restaurantId, diary.getId());
-            String urlPath = "/photos/restaurant_" + restaurantId + "/" + diary.getId() + ".jpg";  //클라이언트에서 사용할 경로
-
-            diary.setPhotoPath(urlPath);  //Glide에서 사용할 수 있도록 URL 경로 저장
-            foodDiaryRepo.save(diary);
+            // 실제 파일 저장 + 경로 반환
+            String urlPath = savePhotoToFileSystem(photoBytes, restaurantId, diary.getId());
+            diary.setPhotoPath(urlPath);
+            foodDiaryRepo.save(diary); // 경로까지 포함해서 다시 저장
         }
-
     }
 
     // 일기 수정
@@ -56,8 +54,8 @@ public class FoodDiaryService {
         diary.setDiaryText(diaryText);
 
         if (photoBytes != null) {
-            String photoPath = savePhotoToFileSystem(photoBytes, diary.getRestaurant().getId(), diary.getId());
-            diary.setPhotoPath(photoPath);
+            String urlPath = savePhotoToFileSystem(photoBytes, diary.getRestaurant().getId(), diary.getId());
+            diary.setPhotoPath(urlPath);
         }
 
         foodDiaryRepo.save(diary);
@@ -69,7 +67,7 @@ public class FoodDiaryService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 일기를 찾을 수 없습니다."));
 
         if (diary.getPhotoPath() != null) {
-            File photoFile = new File(diary.getPhotoPath());
+            File photoFile = new File("/home/ec2-user" + diary.getPhotoPath());
             if (photoFile.exists()) {
                 photoFile.delete();
             }
@@ -84,7 +82,7 @@ public class FoodDiaryService {
 
         for (FoodDiary diary : allDiaries) {
             if (diary.getPhotoPath() != null) {
-                File photoFile = new File(diary.getPhotoPath());
+                File photoFile = new File("/home/ec2-user" + diary.getPhotoPath());
                 if (photoFile.exists()) {
                     photoFile.delete();
                 }
@@ -94,7 +92,6 @@ public class FoodDiaryService {
         foodDiaryRepo.deleteAll();
     }
 
-
     // 자동 증가 값 초기화
     public void resetAutoIncrement() {
         entityManager.createNativeQuery("ALTER TABLE restaurantdb.food_diary AUTO_INCREMENT = 1").executeUpdate();
@@ -102,7 +99,7 @@ public class FoodDiaryService {
 
     // 사진 저장
     private String savePhotoToFileSystem(byte[] photoBytes, Long restaurantId, Long diaryId) throws IOException {
-        String filePath = "photos/restaurant_" + restaurantId + "/" + diaryId + ".jpg";
+        String filePath = "/home/ec2-user/uploads/restaurant_" + restaurantId + "/" + diaryId + ".jpg";
         File file = new File(filePath);
 
         if (!file.getParentFile().exists()) {
@@ -113,8 +110,10 @@ public class FoodDiaryService {
             fos.write(photoBytes);
         }
 
-        return filePath;
+        // ✅ 클라이언트가 접근할 수 있는 경로 반환
+        return "/uploads/restaurant_" + restaurantId + "/" + diaryId + ".jpg";
     }
 }
+
 
 

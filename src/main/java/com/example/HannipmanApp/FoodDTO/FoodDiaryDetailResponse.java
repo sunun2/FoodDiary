@@ -12,8 +12,12 @@ public class FoodDiaryDetailResponse {
     private String address;
     private Boolean heart;
 
+    private Float rating;          // 추가
+    private String menuName;       // 추가
+
     public FoodDiaryDetailResponse(Long id, String diaryText, Date createdAt,
-                                   String photoPath, Long restaurantId, String restaurantName, String address, Boolean heart) {
+                                   String photoPath, Long restaurantId, String restaurantName,
+                                   String address, Boolean heart, Float rating, String menuName) {
         this.id = id;
         this.diaryText = diaryText;
         this.createdAt = createdAt;
@@ -22,8 +26,11 @@ public class FoodDiaryDetailResponse {
         this.restaurantName = restaurantName;
         this.address = address;
         this.heart = heart;
+        this.rating = rating; //추가
+        this.menuName = menuName; // 추가
     }
 
+    // --- Getter & Setter ---
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -47,5 +54,10 @@ public class FoodDiaryDetailResponse {
 
     public Boolean getHeart() { return heart; }
     public void setHeart(Boolean heart) { this.heart = heart; }
-}
 
+    public Float getRating() { return rating; }         // ⭐️ 추가
+    public void setRating(Float rating) { this.rating = rating; }
+
+    public String getMenuName() { return menuName; }    // ⭐️ 추가
+    public void setMenuName(String menuName) { this.menuName = menuName; }
+}
