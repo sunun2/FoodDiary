@@ -183,7 +183,7 @@ public ResponseEntity<List<FoodDiaryFeedResponse>> getFeed(@RequestParam(default
 
 ## 📎 참고 자료
 
-- 📂 [프로젝트 발표 자료](./1조 프로젝트기획서.pdf)
+- 📂 [프로젝트 기획서](./1조프로젝트기획서.pdf)
 - 📂 [프로젝트 발표 자료](./한입만.pdf)
 
 
