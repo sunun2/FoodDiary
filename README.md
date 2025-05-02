@@ -178,3 +178,12 @@ public ResponseEntity<List<FoodDiaryFeedResponse>> getFeed(@RequestParam(default
 >실무와 유사한 경험을 바탕으로 포트폴리오를 보완하고, 더 깊이 있는 개발자로 성장하고 싶습니다.
 함께한 팀원들과의 협업을 통해 기술적 성장뿐 아니라 소통의 중요성도 배웠습니다. 🙌
 
+
+---
+
+## 📎 참고 자료
+
+- 📂 [프로젝트 발표 자료](./1조 프로젝트기획서.pdf)
+- 📂 [프로젝트 발표 자료](./한입만.pdf)
+
+
